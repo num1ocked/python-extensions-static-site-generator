@@ -1,5 +1,6 @@
 import shutil
 import sys
+from ssg import hooks
 
 from typing import List
 from pathlib import Path
@@ -45,6 +46,7 @@ class MarkdownParser(Parser):
     def parse(self, path, source, dest):
         content = Content.load(self.read(path))
         html = markdown(content.body)
+        filtered = hooks.filter("generate_menu", html, self.base.ext)
         self.write(path, dest, html)
         sys.stdout.write(
             "\x1b[1;32m{} converted to HTML. Metadata: {}\n".format(path.name, content)
